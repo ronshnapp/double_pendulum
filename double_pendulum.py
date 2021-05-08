@@ -122,14 +122,18 @@ class double_pendulum():
     def calculate_kinetic_energy(self):
         '''
         Will calcualte and return the kinetic energy of the double pendulum
-        system: Ek = 0.5*(V1^2 + V2^2). Returns result as a numpy 
-        array.
+        system: Ek = m*0.5*(V1^2 + V2^2). In the polar coordinates it can be
+        varified that 
+        V1^2 = x_dot^2
+        V2^2 = x_dot^2 + y_dot^2 + 2*x_dot*y_dot*cos(x-y) 
+        Also, here the mass and rod length are m=1 and L=1
+        Returns result as a numpy array.
         '''
         L = 1.0
         xd, yd = np.array(self.x_dot) , np.array(self.y_dot)
         
         e1 = 0.5 * L**2 * xd**2
-        tmp = xd**2 + yd**2 + xd*yd* cos(np.array(self.x) - np.array(self.y))
+        tmp = xd**2 + yd**2 + 2*xd*yd* cos(np.array(self.x) - np.array(self.y))
         e2 = 0.5 * L**2 * tmp
         return e1 + e2
     
@@ -137,9 +141,15 @@ class double_pendulum():
     def calculate_potential_energy(self):
         '''
         Will calcualte and return the potential energy of the double pendulum
-        system: Ek = g*H = (L/T)^2 * (-2 cos(x) - cos(y)).
+        system: U = m*g*(H1+H2) = m*(L*Omega)^2 * (-2 cos(x) - cos(y)).
+        Here we take (for now) the mass, typical frequency, and Length as
+        m=1, L=1, Omega = 1. Also, to have positive energy the height is
+        measured from the bottom most position of the pendulums.
         '''
-        return -2*cos(self.x) - cos(self.y)
+        L = 1.0
+        h1 = 2*L - L*cos(self.x)
+        h2 = 2*L - L*cos(self.x) - L*cos(self.y)
+        return h1+h2
     
     
     def plot_one_frame(self, ax, i):
@@ -197,7 +207,7 @@ if __name__ == '__main__':
     start_time = time.time()
     
     steps = 6280*4*5
-    dt = 0.00005
+    dt = 0.001
     dp = double_pendulum(1.5, 2.25, 0.0, 0.0, dt)
     for i in range(steps):
         dp.step()
@@ -210,7 +220,12 @@ if __name__ == '__main__':
     
     print('solved %d steps in %.2f seconds' %(steps,time.time() - start_time))
 
-
+    e = dp.calculate_kinetic_energy()
+    p = dp.calculate_potential_energy()
+    E = p+e
+    
+    print('dE/E0/dt = %.2e'%( (E[-1]/E[0]-1.0)/t[-1] ) )
+    
     #fig, ax = plt.subplots()
     #ax.plot(t[::10],x[::10])
     #ax.plot(t[::10],y[::10])
