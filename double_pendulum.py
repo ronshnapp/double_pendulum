@@ -65,6 +65,33 @@ class double_pendulum():
         This uses the 2nd order Runge Kuta method for integration. This direct
         implementation is quicker than using numpy arrays.
         '''
+        
+        # xi = self.x[-1]
+        # yi = self.y[-1]
+        # x_doti = self.x_dot[-1]
+        # y_doti = self.y_dot[-1]
+        
+        # dx_i_m = x_doti * self.dt
+        # dy_i_m = y_doti * self.dt
+        # dx_dot_i_m = x_dot_dot(xi, yi, x_doti, y_doti) * self.dt
+        # dy_dot_i_m = y_dot_dot(xi, yi, x_doti, y_doti) * self.dt
+    
+        # x_m = xi + dx_i_m
+        # y_m = yi + dy_i_m
+        # x_dot_m = x_doti + dx_dot_i_m
+        # y_dot_m = y_doti + dy_dot_i_m
+    
+        # dx_i = x_dot_m * self.dt
+        # dy_i = y_dot_m * self.dt
+        # dx_dot_i = x_dot_dot(x_m, y_m, x_dot_m, y_dot_m) * self.dt
+        # dy_dot_i = y_dot_dot(x_m, y_m, x_dot_m, y_dot_m) * self.dt
+    
+        # self.t.append(self.t[-1] + self.dt)
+        # self.x.append(xi + dx_i)
+        # self.y.append(yi + dy_i)
+        # self.x_dot.append(x_doti + dx_dot_i)
+        # self.y_dot.append(y_doti + dy_dot_i)
+        
         xi = self.x[-1]
         yi = self.y[-1]
         x_doti = self.x_dot[-1]
@@ -80,10 +107,10 @@ class double_pendulum():
         x_dot_m = x_doti + dx_dot_i_m
         y_dot_m = y_doti + dy_dot_i_m
     
-        dx_i = x_dot_m * self.dt
-        dy_i = y_dot_m * self.dt
-        dx_dot_i = x_dot_dot(x_m, y_m, x_dot_m, y_dot_m) * self.dt
-        dy_dot_i = y_dot_dot(x_m, y_m, x_dot_m, y_dot_m) * self.dt
+        dx_i = (x_doti+x_dot_m) * self.dt / 2
+        dy_i = (y_doti+y_dot_m) * self.dt / 2
+        dx_dot_i = (x_dot_dot(x_m, y_m, x_dot_m, y_dot_m) * self.dt + dx_dot_i_m)/2
+        dy_dot_i = (y_dot_dot(x_m, y_m, x_dot_m, y_dot_m) * self.dt + dy_dot_i_m)/2
     
         self.t.append(self.t[-1] + self.dt)
         self.x.append(xi + dx_i)
@@ -206,8 +233,8 @@ if __name__ == '__main__':
     import time
     start_time = time.time()
     
-    steps = 6280*4*5
-    dt = 0.001
+    steps = 6280*4
+    dt = 0.01
     dp = double_pendulum(1.5, 2.25, 0.0, 0.0, dt)
     for i in range(steps):
         dp.step()
