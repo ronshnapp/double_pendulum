@@ -14,11 +14,14 @@ The script double_pendulum.py has two functions that represent the dynamical sys
 
 To run the code you'll need Python and installed with NumPy. For visualizing static plots you'll need to have Matplotlib as well. All of these are easily obtained using e.g. the anaconda distribution.  
 
-To make animations, other softwares (e.g. ffmpeg) are currently needed, as described below. 
+To make animations, a third party video editting software, such as ffmpeg (https://ffmpeg.org/), is currently needed. MoviePy can be used but it is not necessary. See details below. 
 
 ### gifs and animations
 
-to make gifs and anumations of your results you can use the double_pendulum.make_images() method to save series of images of the pendulums on the hard drive, and then use softwares such as ffmpeg to generate the animations in a verity of different formats.
+There are two options to make gifs and animations of your results:
+
+1. The double_pendulum.make_images() method can be used to save series of images of the pendulums on the hard drive. After that use video a editing software such as ffmpeg to generate the animations in a verity of different formats.
+2. MoviePy can be used to generate animations of the results using the double_pendulum.animate() method. Note that ffmpeg is still needed because it is used by MoviePy.
 
 ## The equation of motion
 
@@ -34,7 +37,7 @@ For now, the script solves only the case where the two pendulums  have the  same
 
 ## Numerical integration
 
-The script currently uses a simple 2nd order Runge-Kuta method to advance the state of the pundulum in time. For now, the time step in the integration is constant and there are no automatic chacks for convergence. This means that the user has to insert a timestep argument, and make sure that it is small enough so that no errors or blow ups will occur. A possible extension of this project is to include automatic timestep choices, make functions for validations of convergence, and turn the integration method to higher order. 
+The script currently uses a simple 2nd order Runge-Kuta method to advance the state of the pendulum in time. For now, the time step in the integration is constant and there are no automatic validations for convergence. This means that the user has to insert a timestep argument, and make sure that it is small enough so that no errors or blow ups will occur. A possible extension of this project is to include automatic timestep choices, make functions for validations of convergence, and turn the integration method to higher order. 
 
 ## Spread it around
 
@@ -42,5 +45,5 @@ Did you use this code to find something amazing? This is great, and I'd love to 
 
 ## Contributions
 
-Contributions to this project are most welcome! Also, feel free to fork extend and transform and share this project as you see fit.
+Contributions to this project are most welcome! Also, feel free to fork, extend and transform, and share this project as you see fit.
 

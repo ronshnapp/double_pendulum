@@ -179,6 +179,7 @@ class double_pendulum():
         return h1+h2
     
     
+    
     def plot_one_frame(self, ax, i):
         '''
         will plot the pendulum at iteration i onto a given matplotlib 
@@ -198,6 +199,7 @@ class double_pendulum():
         ax.set_ylim([-2.1*L, 2.1*L])
         ax.set_aspect('equal')
         
+        
     def make_images(self, dt, t0, tf):
         '''
         will generate a series of images with the pendulum state and save
@@ -205,7 +207,7 @@ class double_pendulum():
         the series begins at time t0, end at tf, and the time interval is dt.
         '''
         fig, ax = plt.subplots()
-        
+        fig.set_size_inches(7,7)
         t = np.array(self.t)
         jf = np.where(t>=tf)[0][0]
         j0 = np.where(t>=t0)[0][0]
@@ -221,6 +223,42 @@ class double_pendulum():
         plt.close(fig)
         
 
+    def animate(self, dt, t0, tf, play_speed=3.0):
+        '''
+        will animate and save a .mp4 animation of the pendulum location.
+        This feature requires that moviepy and ffmpeg are installed.
+        '''
+        from moviepy.video.io.bindings import mplfig_to_npimage
+        import moviepy.editor as mpy
+        
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot()
+        self.fig.set_size_inches(7,7)
+        t = np.array(self.t)
+        jf = np.where(t>=tf)[0][0]
+        j0 = np.where(t>=t0)[0][0]
+        dj = np.where(t>=dt)[0][0]
+        
+        N = int(np.ceil((jf-j0)/dj))
+        dur = dt*(N-1)/play_speed
+        
+        self.anim_j_lst = range(j0, jf, dj)
+        self.counter = 0
+        
+        def mk_frame(i):
+            j = self.anim_j_lst[self.counter]
+            self.plot_one_frame(self.ax, j)
+            img = mplfig_to_npimage(self.fig)
+            self.counter += 1
+            self.ax.clear()
+            return img
+
+        animation = mpy.VideoClip(mk_frame , duration=dur)
+        
+        animation.write_videofile('test.avi', fps = play_speed/dt, codec='png')
+        return animation
+    
+
 
 
 
@@ -233,8 +271,8 @@ if __name__ == '__main__':
     import time
     start_time = time.time()
     
-    steps = 6280*4
-    dt = 0.01
+    steps = 6280*3
+    dt = 0.005
     dp = double_pendulum(1.5, 2.25, 0.0, 0.0, dt)
     for i in range(steps):
         dp.step()
